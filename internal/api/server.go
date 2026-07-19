@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/DHSY-ishere/kanbanAPI/internal/config"
@@ -10,12 +11,14 @@ import (
 
 type Server struct {
 	cfg    config.Config
+	db     *sql.DB
 	router *chi.Mux
 }
 
-func NewServer(cfg config.Config) *Server {
+func NewServer(cfg config.Config, db *sql.DB) *Server {
 	s := &Server{
 		cfg:    cfg,
+		db:     db,
 		router: chi.NewRouter(),
 	}
 	s.routes()
@@ -33,8 +36,13 @@ func (s *Server) routes() {
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
+	if err := s.db.Ping(); err != nil {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		w.Write([]byte(`{"status":"db down"}`))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status": "ok"}`))
+	w.Write([]byte(`{"status":"ok"}`))
 }
 
 func (s *Server) Run() error {
