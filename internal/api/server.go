@@ -31,8 +31,14 @@ func (s *Server) routes() {
 
 	s.router.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", s.handleHealth)
+		r.Get("/version", s.handleVersion)
 
 	})
+}
+
+func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"version":"0.0.1"}`))
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {

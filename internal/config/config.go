@@ -11,8 +11,8 @@ type Config struct {
 func Load() Config {
 	return Config{
 		Addr:      getEnv("ADDR", ":8080"),
-		DBUrl:     getEnv("DB_URL", ""),
-		JWTSecret: getEnv("JWT_SECRET", ""),
+		DBUrl:     getEnv("DB_URL", "postgres://ecom_user:ecom_pass@localhost:5432/ecom?sslmode=disable"),
+		JWTSecret: getEnv("JWT_SECRET", "dev-secret-change-me"),
 	}
 }
 
